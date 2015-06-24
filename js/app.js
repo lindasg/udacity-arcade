@@ -1,36 +1,11 @@
 var TILE_WIDTH = 101,
     TILE_HEIGHT = 83,
-    ENEMY_SPEED = 2,
+    ENEMY_SPEED = 3,
     ENEMY_X_START = -50,
     START_X_PLAYER = TILE_WIDTH * 2,
-    START_Y_PLAYER = TILE_HEIGHT * 5 - 10;
-
-
-ep = document.getElementById('enemySpeed');
-ep.addEventListener('change', function(e){
-  
-  selectedEnemySpeed = ep.options[ep.selectedIndex].value;
-  allEnemies = [];
-  ENEMY_SPEED = selectedEnemySpeed - 0;
-  interval_time = auto_calc_time_push(ENEMY_SPEED);
-  pushNewEnemy(interval_time);
-
-});
-
-var auto_calc_time_push = function(enemy_speed){
-  switch (enemy_speed){
-    case 1:      
-      return 1100;
-    case 2:
-      return 700;
-    case 3:
-      return 500;
-    case 4:
-      return 500;
-    default:
-      return 1000;
-  }
-};
+    START_Y_PLAYER = TILE_HEIGHT * 5 - 10,
+    TIME_INTERVAL = 500,
+    DONE = false;
 
 var generate_random1_3 = function(){
   return Math.floor(Math.random() * (4 - 1 + 1))+1;
@@ -61,7 +36,6 @@ Enemy.prototype = {
       player.y = START_Y_PLAYER;
     }
 
-    
   },
 
   render: function() {
@@ -81,8 +55,11 @@ var Player = function(){
 Player.prototype = {
 
   update: function(){
-    if(this.y <= -10){
-      // Display reset option to UI
+    if((this.y === -10) && (DONE === false)){
+      var h1 = document.createElement('h1');
+      h1.innerHTML = "DONE";
+      document.body.insertBefore(h1, document.body.childNodes[0]);
+      DONE = true;
     }
   },
 
@@ -119,15 +96,11 @@ Player.prototype = {
 
 var player = new Player();
 var allEnemies = [];
-var interval_time;
 
 allEnemies.push(new Enemy());
-var pushNewEnemy = function(interval_time){
-  setInterval(function(){
-    allEnemies.push(new Enemy());
-  }, interval_time);
-};
-pushNewEnemy(auto_calc_time_push(ENEMY_SPEED));
+setInterval(function(){
+  allEnemies.push(new Enemy());
+}, TIME_INTERVAL);
 
 
 
