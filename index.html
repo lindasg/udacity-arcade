@@ -6,43 +6,68 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- Minimum header -->
   <header>
-    <h1>Adventure - Get as many items as possible</h1>
+    <h1 id="main-title">Reach 10 points by collecting stars or hearts</h1>
   </header>
 
+  <!-- Left side pane -->
   <div class="side-pane">
     <a id="open-modal" href="#modal">
       HOW TO
     </a>
     <div class="point-box">
-      <h3>Points:</h3>
-      <h3 id="points"></h3>
+      <h3>Your<br/>Points</h3>
+      <h1 id="points"></h1>
     </div>
   </div>
 
+  <!-- HOW TO pop up message -->
   <div id="modal">
     <div class="inner-modal">
       <a href="#" class="close">X</a>
       <h1>Welcome!</h1>
       <p>
-        A character is positioned at starting point (bottom of the canvas). Use arrow keys of your computer (UP, DOWN, LEFT, RIGHT) to move the character to get several items to gain points.
+        A character is positioned at bottom of of the canvas. <br />
+        Use arrow keys of your computer (UP, DOWN, LEFT, RIGHT) to move the character.
         <br />
         <br />
-        If you get hit by running bugs on street, you will lose 1 point. You have 3 points at the beginning. If your points become 0, game over!
+        Move the character to get a star (worth 1 point) and/or a heart(worth 2 points) to gain points. You will win if you gain 10 points.
+        <br />
+        <br />
+        If you get hit by running bugs on street, you will lose 1 point. If your points become 0, game over! You have 3 points at the beginning.
         <br />
         <br />
         Have fun!
       </p>
     </div>
   </div>
+
+  <!-- Pop up message on losing a game -->
+  <div id="gameover">
+    <div class="inner-modal">
+      <a href="#" class="close">X</a>
+      <h1>GAME OVER!</h1>
+      <p>
+        Oh no ...! You ran out points. But, don't worry. You can play as many as you want!
+      </p>
+    </div>
+  </div>
+
+  <!-- Pop up message on gaining 10 points -->
+  <div id="accomplished">
+    <div class="inner-modal">
+      <a href="#" class="close">X</a>
+      <h1>Congratz!</h1>
+      <p>
+        You are so great! You gained 10 points!! Thank you for playing. You can play again if you want :)
+      </p>
+    </div>
+  </div>
+
+  <!-- Javascript files -->
   <script src="js/resources.js"></script>
   <script src="js/app.js"></script>
   <script src="js/engine.js"></script>
-
-  <script>
-    (function(){
-
-    })();
-  </script>
 </body>
 </html>

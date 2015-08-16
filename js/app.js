@@ -3,10 +3,9 @@ var TILE_WIDTH = 101,
     TILE_HEIGHT = 83,
     ENEMY_SPEED = 3,
     ENEMY_X_START = -50,
-    START_X_PLAYER = TILE_WIDTH * 2,
+    START_X_PLAYER = TILE_WIDTH * 4,
     START_Y_PLAYER = TILE_HEIGHT * 5 - 10,
     TIME_INTERVAL = 500,
-    DONE = false,
     POINT = 3;
 
 // Generate Random Y Axis (between 1st stone tile to 4th grass tile from top)
@@ -17,6 +16,17 @@ function randomYPosition(){
 // Generate Random X Axis (between 1st stone tile to 10th from left)
 function randomXPosition(){
   return Math.floor(Math.random() * (9 - 0 + 1));
+}
+
+// Overwrite inner HTML text of target id element
+function insertTextOfElement(idName, insertText){
+  return document.getElementById(idName).innerHTML = insertText;
+}
+
+// Set player's position to starting point
+function setPlayerStartPosition(player){
+  player.x = START_X_PLAYER;
+  player.y = START_Y_PLAYER;
 }
 
 // Generate an enemy on random starting position
@@ -38,11 +48,18 @@ Enemy.prototype = {
     }
 
     // When enemy hits player (note: consider the size of graphics)
-    if((player.x - this.x < 30) && (this.x - player.x < 30) && (this.y - player.y < 30) && (player.y - this.y < 30)){
-      player.x = START_X_PLAYER;
-      player.y = START_Y_PLAYER;
-      POINT--;
-      document.getElementById('points').innerHTML = POINT;
+    if(player){
+      if((player.x - this.x < 30) && (this.x - player.x < 30) && (this.y - player.y < 30) && (player.y - this.y < 30)){
+        setPlayerStartPosition(player);
+        if(POINT >= 1){
+          POINT--;
+        }
+        insertTextOfElement('points', POINT);
+
+        if(POINT === 0){
+          popUpMessage();
+        }
+      }
     }
 
   },
@@ -55,20 +72,11 @@ Enemy.prototype = {
 // Generate player on starting position
 var Player = function(){
   this.sprite = 'images/char-boy.png';
-  this.x = START_X_PLAYER;
-  this.y = START_Y_PLAYER;
+  setPlayerStartPosition(this);
 };
 
 // Define Player object
 Player.prototype = {
-  // Reset player position
-  update: function(){
-    // if((this.y === -10) && (DONE === false)){
-    //   DONE = true;
-    //   startGame();
-    // }
-  },
-
   // Set player position
   render: function(){
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
@@ -101,7 +109,7 @@ Player.prototype = {
   }
 };
 
-// Items
+// Heart item
 var Heart = function(){
   this.sprite = 'images/Heart.png';
   this.x = TILE_WIDTH * randomXPosition();
@@ -113,17 +121,24 @@ Heart.prototype = {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
   },
 
+  // Randomly place a new heart after user collects once
+  // also update points
   update: function(){
     if((player.x - this.x < 30) && (this.x - player.x < 30) && (this.y - player.y < 30) && (player.y - this.y < 30)){
       POINT+=2;
-      player.x = START_X_PLAYER;
-      player.y = START_Y_PLAYER;
-      document.getElementById('points').innerHTML = POINT;
+      setPlayerStartPosition(player);
+      insertTextOfElement('points', POINT);
       this.x = TILE_WIDTH * randomXPosition();
+
+      // Pop up message on reaching 10 points
+      if(POINT >= 10){
+        popUpMessage();
+      }
     }
   }
 };
 
+// Star item
 var Star = function(){
   this.sprite = 'images/Star.png';
   this.x = TILE_WIDTH * randomXPosition();
@@ -135,13 +150,19 @@ Star.prototype = {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
   },
 
+  // Randomly place a new star after user collects once
+  // also update points
   update: function(){
     if((player.x - this.x < 30) && (this.x - player.x < 30) && (this.y - player.y < 30) && (player.y - this.y < 30)){
       POINT++;
-      player.x = START_X_PLAYER;
-      player.y = START_Y_PLAYER;
-      document.getElementById('points').innerHTML = POINT;
+      setPlayerStartPosition(player);
+      insertTextOfElement('points', POINT);
       this.x = TILE_WIDTH * randomXPosition();
+
+      // Pop up message on reaching 10 points
+      if(POINT >= 10){
+        popUpMessage();
+      }
     }
   }
 };
@@ -149,6 +170,7 @@ Star.prototype = {
 // Create a player and enemies to start a new game
 var player, allEnemies, enemyCreation, heart, star;
 
+// Generate a new enemy and push it to the enemy array
 function enemyGenerationCycle(){
   enemyCreation = setInterval(function(){
     allEnemies.push(new Enemy());
@@ -158,20 +180,30 @@ function enemyGenerationCycle(){
 // Initialize a new game
 function startGame(){
   clearInterval(enemyCreation);
-  DONE = false;
   player = new Player();
   heart = new Heart();
   star = new Star();
   allEnemies = [];
   enemyGenerationCycle();
-  document.getElementById('points').innerHTML = POINT;
+  insertTextOfElement('points', POINT);
 }
 
-// GAME TIME!!!
-startGame();
+// Pop up message on reaching 10 points or losing the game
+// and reset the points to 3
+function popUpMessage(){
+  if(POINT === 0){
+    window.location.href = 'http://localhost:8080/#gameover';
+    POINT = 3;
+    insertTextOfElement('points', POINT);
+  } else if(POINT >= 10){
+    window.location.href = 'http://localhost:8080/#accomplished';
+    POINT = 3;
+    insertTextOfElement('points', POINT);
+  }
+}
 
 // Eventlistener setup for keyboard
-document.addEventListener('keydown', function(e) {
+var keyBindings = function(e) {
   var allowedKeys = {
     37: 'left',
     38: 'up',
@@ -179,4 +211,8 @@ document.addEventListener('keydown', function(e) {
     40: 'down'
   };
   player.handleInput(allowedKeys[e.keyCode]);
-});
+};
+document.addEventListener('keydown', keyBindings);
+
+// GAME TIME!!!
+startGame();
