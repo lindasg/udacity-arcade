@@ -12,5 +12,6 @@
 
 
 Resources:
-
+- [flat colors](https://flatuicolors.com/)
+- [CSS Modal (No Javascript)](http://paulrhayes.com/2011-03/css-modal/)
 - [why setInterval() cycle goes faster every time?](http://stackoverflow.com/questions/18391551/why-setinterval-cycle-goes-faster-every-time)

@@ -7,7 +7,7 @@ var TILE_WIDTH = 101,
     START_Y_PLAYER = TILE_HEIGHT * 5 - 10,
     TIME_INTERVAL = 500,
     DONE = false,
-    SCORE = 3;
+    POINT = 3;
 
 // Generate Random Y Axis (between 1st stone tile to 4th grass tile from top)
 function randomYPosition(){
@@ -41,8 +41,8 @@ Enemy.prototype = {
     if((player.x - this.x < 30) && (this.x - player.x < 30) && (this.y - player.y < 30) && (player.y - this.y < 30)){
       player.x = START_X_PLAYER;
       player.y = START_Y_PLAYER;
-      SCORE--;
-      document.getElementById('score').innerHTML = SCORE;
+      POINT--;
+      document.getElementById('points').innerHTML = POINT;
     }
 
   },
@@ -115,10 +115,10 @@ Heart.prototype = {
 
   update: function(){
     if((player.x - this.x < 30) && (this.x - player.x < 30) && (this.y - player.y < 30) && (player.y - this.y < 30)){
-      SCORE+=2;
+      POINT+=2;
       player.x = START_X_PLAYER;
       player.y = START_Y_PLAYER;
-      document.getElementById('score').innerHTML = SCORE;
+      document.getElementById('points').innerHTML = POINT;
       this.x = TILE_WIDTH * randomXPosition();
     }
   }
@@ -137,10 +137,10 @@ Star.prototype = {
 
   update: function(){
     if((player.x - this.x < 30) && (this.x - player.x < 30) && (this.y - player.y < 30) && (player.y - this.y < 30)){
-      SCORE++;
+      POINT++;
       player.x = START_X_PLAYER;
       player.y = START_Y_PLAYER;
-      document.getElementById('score').innerHTML = SCORE;
+      document.getElementById('points').innerHTML = POINT;
       this.x = TILE_WIDTH * randomXPosition();
     }
   }
@@ -164,7 +164,7 @@ function startGame(){
   star = new Star();
   allEnemies = [];
   enemyGenerationCycle();
-  document.getElementById('score').innerHTML = SCORE;
+  document.getElementById('points').innerHTML = POINT;
 }
 
 // GAME TIME!!!
