@@ -6,7 +6,8 @@ var TILE_WIDTH = 101,
     START_X_PLAYER = TILE_WIDTH * 2,
     START_Y_PLAYER = TILE_HEIGHT * 5 - 10,
     TIME_INTERVAL = 500,
-    DONE = false;
+    DONE = false,
+    SCORE = 3;
 
 // Generate Random Y Axis (between 1st stone tile to 4th grass tile from top)
 function randomYPosition(){
@@ -30,11 +31,6 @@ Enemy.prototype = {
   update: function(dt) {
     this.x += (dt * 100 * (ENEMY_SPEED+1));
 
-    // if((player.x == this.x)){
-    //   player.x = START_X_PLAYER;
-    //   player.y = START_Y_PLAYER;
-    // }
-
     // Delete enemy once it crosses the canvas
     if(this.x > TILE_WIDTH * 10){
       var index = allEnemies.indexOf(this);
@@ -45,6 +41,8 @@ Enemy.prototype = {
     if((player.x - this.x < 30) && (this.x - player.x < 30) && (this.y - player.y < 30) && (player.y - this.y < 30)){
       player.x = START_X_PLAYER;
       player.y = START_Y_PLAYER;
+      SCORE--;
+      document.getElementById('score').innerHTML = SCORE;
     }
 
   },
@@ -65,13 +63,10 @@ var Player = function(){
 Player.prototype = {
   // Reset player position
   update: function(){
-    if((this.y === -10) && (DONE === false)){
-      // var h1 = document.createElement('h1');
-      // h1.innerHTML = "DONE";
-      // document.body.insertBefore(h1, document.body.childNodes[0]);
-      DONE = true;
-      startGame();
-    }
+    // if((this.y === -10) && (DONE === false)){
+    //   DONE = true;
+    //   startGame();
+    // }
   },
 
   // Set player position
@@ -107,10 +102,8 @@ Player.prototype = {
 };
 
 // Items
-
-
 var Heart = function(){
-  this.sprite = 'images/Star.png';
+  this.sprite = 'images/Heart.png';
   this.x = TILE_WIDTH * randomXPosition();
   this.y = TILE_HEIGHT-20;
 };
@@ -118,11 +111,43 @@ var Heart = function(){
 Heart.prototype = {
   render: function(){
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  },
+
+  update: function(){
+    if((player.x - this.x < 30) && (this.x - player.x < 30) && (this.y - player.y < 30) && (player.y - this.y < 30)){
+      SCORE+=2;
+      player.x = START_X_PLAYER;
+      player.y = START_Y_PLAYER;
+      document.getElementById('score').innerHTML = SCORE;
+      this.x = TILE_WIDTH * randomXPosition();
+    }
+  }
+};
+
+var Star = function(){
+  this.sprite = 'images/Star.png';
+  this.x = TILE_WIDTH * randomXPosition();
+  this.y = TILE_HEIGHT * 2 -20;
+};
+
+Star.prototype = {
+  render: function(){
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  },
+
+  update: function(){
+    if((player.x - this.x < 30) && (this.x - player.x < 30) && (this.y - player.y < 30) && (player.y - this.y < 30)){
+      SCORE++;
+      player.x = START_X_PLAYER;
+      player.y = START_Y_PLAYER;
+      document.getElementById('score').innerHTML = SCORE;
+      this.x = TILE_WIDTH * randomXPosition();
+    }
   }
 };
 
 // Create a player and enemies to start a new game
-var player, allEnemies, enemyCreation, heart;
+var player, allEnemies, enemyCreation, heart, star;
 
 function enemyGenerationCycle(){
   enemyCreation = setInterval(function(){
@@ -136,8 +161,10 @@ function startGame(){
   DONE = false;
   player = new Player();
   heart = new Heart();
+  star = new Star();
   allEnemies = [];
   enemyGenerationCycle();
+  document.getElementById('score').innerHTML = SCORE;
 }
 
 // GAME TIME!!!
