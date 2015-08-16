@@ -1,3 +1,4 @@
+// Variables to be used in the game
 var TILE_WIDTH = 101,
     TILE_HEIGHT = 83,
     ENEMY_SPEED = 3,
@@ -7,66 +8,78 @@ var TILE_WIDTH = 101,
     TIME_INTERVAL = 500,
     DONE = false;
 
-var generate_random1_3 = function(){
+// Generate Random Y Axis (between 1st stone tile to 4th grass tile from top)
+function randomYPosition(){
   return Math.floor(Math.random() * (4 - 1 + 1))+1;
-};
+}
 
+// Generate Random X Axis (between 1st stone tile to 10th from left)
+function randomXPosition(){
+  return Math.floor(Math.random() * (9 - 0 + 1));
+}
+
+// Generate an enemy on random starting position
 var Enemy = function() {
   this.sprite = 'images/enemy-bug.png';
   this.x = ENEMY_X_START;
-  this.y = 83 * generate_random1_3() - 20;
+  this.y = TILE_HEIGHT * randomYPosition() - 20;
 };
 
+// Define Enemy object
 Enemy.prototype = {
   update: function(dt) {
     this.x += (dt * 100 * (ENEMY_SPEED+1));
 
-    if((player.x == this.x)){
-      player.x = START_X_PLAYER;
-      player.y = START_Y_PLAYER;
-    }
+    // if((player.x == this.x)){
+    //   player.x = START_X_PLAYER;
+    //   player.y = START_Y_PLAYER;
+    // }
 
-    if(this.x > TILE_WIDTH * 5){
+    // Delete enemy once it crosses the canvas
+    if(this.x > TILE_WIDTH * 10){
       var index = allEnemies.indexOf(this);
       allEnemies.splice(index, 1);
     }
 
+    // When enemy hits player (note: consider the size of graphics)
     if((player.x - this.x < 30) && (this.x - player.x < 30) && (this.y - player.y < 30) && (player.y - this.y < 30)){
       player.x = START_X_PLAYER;
       player.y = START_Y_PLAYER;
     }
 
   },
-
+  // Place enemy on canvas
   render: function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
   }
-
 };
 
-
+// Generate player on starting position
 var Player = function(){
-
   this.sprite = 'images/char-boy.png';
   this.x = START_X_PLAYER;
   this.y = START_Y_PLAYER;
 };
 
+// Define Player object
 Player.prototype = {
-
+  // Reset player position
   update: function(){
     if((this.y === -10) && (DONE === false)){
-      var h1 = document.createElement('h1');
-      h1.innerHTML = "DONE";
-      document.body.insertBefore(h1, document.body.childNodes[0]);
+      // var h1 = document.createElement('h1');
+      // h1.innerHTML = "DONE";
+      // document.body.insertBefore(h1, document.body.childNodes[0]);
       DONE = true;
+      startGame();
     }
   },
 
+  // Set player position
   render: function(){
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
   },
 
+  // Handle player key moves
   handleInput: function(key){
     switch (key){
       case 'up':
@@ -80,7 +93,7 @@ Player.prototype = {
         }
         break;
       case 'right':
-        if(this.x < 404){
+        if(this.x < 101*9){
           this.x += TILE_WIDTH;
         }
         break;
@@ -93,28 +106,50 @@ Player.prototype = {
   }
 };
 
-
-var player = new Player();
-var allEnemies = [];
-
-allEnemies.push(new Enemy());
-setInterval(function(){
-  allEnemies.push(new Enemy());
-}, TIME_INTERVAL);
+// Items
 
 
+var Heart = function(){
+  this.sprite = 'images/Star.png';
+  this.x = TILE_WIDTH * randomXPosition();
+  this.y = TILE_HEIGHT-20;
+};
 
-document.addEventListener('keyup', function(e) {
+Heart.prototype = {
+  render: function(){
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  }
+};
+
+// Create a player and enemies to start a new game
+var player, allEnemies, enemyCreation, heart;
+
+function enemyGenerationCycle(){
+  enemyCreation = setInterval(function(){
+    allEnemies.push(new Enemy());
+  }, TIME_INTERVAL);
+}
+
+// Initialize a new game
+function startGame(){
+  clearInterval(enemyCreation);
+  DONE = false;
+  player = new Player();
+  heart = new Heart();
+  allEnemies = [];
+  enemyGenerationCycle();
+}
+
+// GAME TIME!!!
+startGame();
+
+// Eventlistener setup for keyboard
+document.addEventListener('keydown', function(e) {
   var allowedKeys = {
     37: 'left',
     38: 'up',
     39: 'right',
     40: 'down'
   };
-
   player.handleInput(allowedKeys[e.keyCode]);
 });
-
-
-
-
