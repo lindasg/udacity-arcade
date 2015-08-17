@@ -192,11 +192,11 @@ function startGame() {
 // and reset the points to 3
 function popUpMessage() {
   if(POINT === 0) {
-    window.location.href = '/#gameover';
+    window.location.href = window.location.pathname + '#gameover';
     POINT = 3;
     insertTextOfElement('points', POINT);
   } else if(POINT >= 10) {
-    window.location.href = '/#accomplished';
+    window.location.href = window.location.pathname + '#accomplished';
     POINT = 3;
     insertTextOfElement('points', POINT);
   }
