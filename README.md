@@ -1,5 +1,7 @@
 ### Arcade Game built with Javascript
 
+![Screenshot](/screenshot.png)
+
 #### How to play this game
 - Go to [http://yhagio.github.io/udacity-arcade/](http://yhagio.github.io/udacity-arcade/)
 - A character is positioned at starting point (bottom of the canvas)
