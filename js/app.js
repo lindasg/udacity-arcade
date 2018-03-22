@@ -1,21 +1,21 @@
 // Variables to be used in the game
 var TILE_WIDTH = 101;
 var TILE_HEIGHT = 83;
-var ENEMY_SPEED = 3;
+var ENEMY_SPEED = 2;
 var ENEMY_X_START = -50;
-var START_X_PLAYER = TILE_WIDTH * 4;
+var START_X_PLAYER = TILE_WIDTH * 2;
 var START_Y_PLAYER = TILE_HEIGHT * 5 - 10;
 var TIME_INTERVAL = 500;
 var POINT = 3;
 
 // Generate Random Y Axis (between 1st stone tile to 4th grass tile from top)
 function randomYPosition() {
-  return Math.floor(Math.random() * (4 - 1 + 1))+1;
+  return Math.floor(Math.random() * 4)+1;
 }
 
-// Generate Random X Axis (between 1st stone tile to 10th from left)
+// Generate Random X Axis (between 1st stone tile to 5th from left)
 function randomXPosition() {
-  return Math.floor(Math.random() * (9 - 0 + 1));
+  return Math.floor(Math.random() * 5);
 }
 
 // Overwrite inner HTML text of target id element
@@ -42,7 +42,7 @@ Enemy.prototype = {
     this.x += (dt * 100 * (ENEMY_SPEED+1));
 
     // Delete enemy once it crosses the canvas
-    if(this.x > TILE_WIDTH * 10) {
+    if(this.x > TILE_WIDTH * 5) {
       var index = allEnemies.indexOf(this);
       allEnemies.splice(index, 1);
     }
@@ -71,7 +71,7 @@ Enemy.prototype = {
 
 // Generate player on starting position
 var Player = function() {
-  this.sprite = 'images/char-boy.png';
+  this.sprite = 'images/char-princess-girl.png';
   setPlayerStartPosition(this);
 };
 
@@ -96,7 +96,7 @@ Player.prototype = {
         }
         break;
       case 'right':
-        if(this.x < 101*9) {
+        if(this.x < 101*4) {
           this.x += TILE_WIDTH;
         }
         break;
@@ -109,40 +109,11 @@ Player.prototype = {
   }
 };
 
-// Heart item
-var Heart = function() {
-  this.sprite = 'images/Heart.png';
-  this.x = TILE_WIDTH * randomXPosition();
-  this.y = TILE_HEIGHT-20;
-};
-
-Heart.prototype = {
-  render: function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-  },
-
-  // Randomly place a new heart after user collects once
-  // also update points
-  update: function() {
-    if((player.x - this.x < 30) && (this.x - player.x < 30) && (this.y - player.y < 30) && (player.y - this.y < 30)) {
-      POINT+=2;
-      setPlayerStartPosition(player);
-      insertTextOfElement('points', POINT);
-      this.x = TILE_WIDTH * randomXPosition();
-
-      // Pop up message on reaching 10 points
-      if(POINT >= 10) {
-        popUpMessage();
-      }
-    }
-  }
-};
-
 // Star item
 var Star = function() {
   this.sprite = 'images/Star.png';
   this.x = TILE_WIDTH * randomXPosition();
-  this.y = TILE_HEIGHT * 2 -20;
+  this.y = TILE_HEIGHT * randomYPosition() -20;
 };
 
 Star.prototype = {
@@ -155,20 +126,21 @@ Star.prototype = {
   update: function() {
     if((player.x - this.x < 30) && (this.x - player.x < 30) && (this.y - player.y < 30) && (player.y - this.y < 30)) {
       POINT++;
-      setPlayerStartPosition(player);
       insertTextOfElement('points', POINT);
       this.x = TILE_WIDTH * randomXPosition();
+      this.y = TILE_HEIGHT * randomYPosition() -20;
 
       // Pop up message on reaching 10 points
       if(POINT >= 10) {
         popUpMessage();
+        setPlayerStartPosition(player);
       }
     }
   }
 };
 
 // Create a player and enemies to start a new game
-var player, allEnemies, enemyCreation, heart, star;
+var player, allEnemies, enemyCreation, star;
 
 // Generate a new enemy and push it to the enemy array
 function enemyGenerationCycle() {
@@ -181,7 +153,6 @@ function enemyGenerationCycle() {
 function startGame() {
   clearInterval(enemyCreation);
   player = new Player();
-  heart = new Heart();
   star = new Star();
   allEnemies = [];
   enemyGenerationCycle();

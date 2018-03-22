@@ -25,7 +25,7 @@ var Engine = (function(global) {
       ctx = canvas.getContext('2d'),
       lastTime;
 
-  canvas.width = 1010;
+  canvas.width = 505;
   canvas.height = 606;
   doc.body.appendChild(canvas);
 
@@ -94,7 +94,6 @@ var Engine = (function(global) {
     allEnemies.forEach(function(enemy) {
         enemy.update(dt);
     });
-    heart.update();
     star.update();
   }
 
@@ -117,13 +116,14 @@ var Engine = (function(global) {
       'images/grass-block.png'    // Row 2 of 2 of grass
     ],
     numRows = 6,
-    numCols = 10,
+    numCols = 5,
     row, col;
 
     /* Loop through the number of rows and columns we've defined above
      * and, using the rowImages array, draw the correct image for that
      * portion of the "grid"
      */
+    ctx.clearRect(0, 0, 505, 83);
     for (row = 0; row < numRows; row++) {
       for (col = 0; col < numCols; col++) {
         /* The drawImage function of the canvas' context element
@@ -152,7 +152,6 @@ var Engine = (function(global) {
     });
 
     player.render();
-    heart.render();
     star.render();
   }
 
@@ -173,8 +172,7 @@ var Engine = (function(global) {
     'images/water-block.png',
     'images/grass-block.png',
     'images/enemy-bug.png',
-    'images/char-boy.png',
-    'images/Heart.png',
+    'images/char-princess-girl.png',
     'images/Star.png',
     'images/Gem Blue.png'
   ]);
