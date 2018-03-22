@@ -2,6 +2,9 @@
 
 ![Screenshot](/screenshot.png)
 
+#### To start
+- Download all the files and open index.html in your browser.
+
 #### How to play this game
 - Click "How to" on the top left corner of the screen
 - A character is positioned at starting point (bottom of the canvas)

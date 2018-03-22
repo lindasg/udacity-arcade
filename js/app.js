@@ -29,6 +29,116 @@ function setPlayerStartPosition(player) {
   player.y = START_Y_PLAYER;
 }
 
+
+class Character {
+  constructor(sprite, x, y) {
+    this.sprite = sprite;
+    this.x = x;
+    this.y = y;
+  }
+
+  render() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  }
+}
+
+class Enemy extends Character {
+  constructor(sprite, x, y) {
+    super(sprite, x, y)
+  }
+
+  render() {
+    super.render();
+  }
+
+  update(dt) {
+    this.x += (dt * 100 * (ENEMY_SPEED+1));
+
+    // Delete enemy once it crosses the canvas
+    if(this.x > TILE_WIDTH * 5) {
+      var index = allEnemies.indexOf(this);
+      allEnemies.splice(index, 1);
+    }
+
+    // When enemy hits player (note: consider the size of graphics)
+    if(player) {
+      if((player.x - this.x < 30) && (this.x - player.x < 30) && (this.y - player.y < 30) && (player.y - this.y < 30)) {
+        setPlayerStartPosition(player);
+        if(POINT >= 1) {
+          POINT--;
+        }
+        insertTextOfElement('points', POINT);
+
+        if(POINT === 0) {
+          popUpMessage();
+        }
+      }
+  }
+}
+}
+
+class Player extends Character {
+  constructor(sprite, x, y) {
+    super(sprite, x, y)
+  }
+
+  render() {
+    super.render();
+  }
+
+  handleInput(key) {
+    switch (key) {
+      case 'up':
+        if(this.y > -10) {
+          this.y -= TILE_HEIGHT;
+        }
+        break;
+      case 'down':
+        if(this.y < START_Y_PLAYER) {
+          this.y += TILE_HEIGHT;
+        }
+        break;
+      case 'right':
+        if(this.x < 101*4) {
+          this.x += TILE_WIDTH;
+        }
+        break;
+      case 'left':
+        if(this.x > 0) {
+          this.x -= TILE_WIDTH;
+        }
+        break;
+    }
+  }
+}
+
+class Star extends Character {
+  constructor(sprite, x, y) {
+    super(sprite, x, y)
+  }
+
+  render() {
+    super.render();
+  }
+
+  update() {
+    if((player.x - this.x < 30) && (this.x - player.x < 30) && (this.y - player.y < 30) && (player.y - this.y < 30)) {
+      POINT++;
+      insertTextOfElement('points', POINT);
+      this.x = TILE_WIDTH * randomXPosition();
+      this.y = TILE_HEIGHT * randomYPosition() -20;
+
+      // Pop up message on reaching 10 points
+      if(POINT >= 10) {
+        popUpMessage();
+        setPlayerStartPosition(player);
+      }
+    }
+  }
+}
+
+
+/*
 // Generate an enemy on random starting position
 var Enemy = function() {
   this.sprite = 'images/enemy-bug.png';
@@ -138,6 +248,7 @@ Star.prototype = {
     }
   }
 };
+*/
 
 // Create a player and enemies to start a new game
 var player, allEnemies, enemyCreation, star;
@@ -145,15 +256,15 @@ var player, allEnemies, enemyCreation, star;
 // Generate a new enemy and push it to the enemy array
 function enemyGenerationCycle() {
   enemyCreation = setInterval(function() {
-    allEnemies.push(new Enemy());
+    allEnemies.push(new Enemy('images/enemy-bug.png', ENEMY_X_START, TILE_HEIGHT * randomYPosition() - 20));
   }, TIME_INTERVAL);
 }
 
 // Initialize a new game
 function startGame() {
   clearInterval(enemyCreation);
-  player = new Player();
-  star = new Star();
+  player = new Player('images/char-princess-girl.png', START_X_PLAYER, START_Y_PLAYER);
+  star = new Star('images/Star.png', TILE_WIDTH * randomXPosition(), TILE_HEIGHT * randomYPosition() -20);
   allEnemies = [];
   enemyGenerationCycle();
   insertTextOfElement('points', POINT);
